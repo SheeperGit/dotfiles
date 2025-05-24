@@ -1,0 +1,10 @@
+#!/bin/sh
+
+xset s off	# Disable screen saver blanking
+xset s noblank	# Same(?)
+
+bluetoothctl power on
+
+~/.fehbg &
+
+exec dwm
