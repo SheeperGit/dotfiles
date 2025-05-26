@@ -3,7 +3,8 @@
 
 # PATH exports
 # Add all directories in `~/.local/bin` to $PATH
-export PATH="$PATH:$(find ~/.local/bin -type d | paste -sd ':' -)"
+PATH_DIR="$HOME/.local/bin" # "Master" PATH directory.
+export PATH="$PATH:$(find "$PATH_DIR" -type d -path "$PATH_DIR/.*" -prune -o -type d -print | paste -sd ':' -)"
 
 # Profile file, runs on login. Environmental variables are set here.
 
@@ -42,6 +43,9 @@ export WGETRC="$XDG_CONFIG_HOME/wgetrc"
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 alias wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"
+
+# Private environment variables. Usually used for scripts.
+[ -f "$PATH_DIR/.private/location" ] && source "$PATH_DIR/.private/location"
 
 # Start graphical server on user's current tty if not already running.
 [ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx "$XINITRC"
