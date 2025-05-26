@@ -1,0 +1,32 @@
+#!/bin/sh
+
+####################
+# Displays weather #
+####################
+
+# Displays weather of the form: <weather-icon><temperature>
+#
+# e.g., 🌦+13°C
+#
+# If LOCATION is not set, this script will display the weather 
+# based on your current location based on your IP address.
+# LOCATION can be set as follows in your shell's rc file 
+# (e.g., .bashrc) or your shell's profile (e.g., .bash_profile): 
+#
+# e.g., LOCATION='Paris'
+#       LOCATION='Las Vegas'
+#       LOCATION='Berlin'
+#
+# Alternatively, LOCATION can be passed as an environment variable 
+# to this script as follows: 
+#
+# e.g., LOCATION='Nuremberg' sb-weather
+
+wttr=$(curl -s "wttr.in/$(echo $LOCATION | tr ' ' '+')?format=%c%t\n" | tr -d ' ')
+echo "$wttr" | grep -q '^Unknown.*' && {
+  echo '🌬️N/A'
+  exit 1
+}
+
+echo "$wttr"
+

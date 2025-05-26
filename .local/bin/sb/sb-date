@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#################
+# Displays date #
+#################
+
+# Displays date of the form: 📅 (<short-DotW>) <full-month> <day-num>, <year>
+#
+# e.g., 📅 (Sun) January 23, 2025
+#
+# Note: Emoji is static.
+
+date '+📅 (%a) %B %d, %Y'
+
