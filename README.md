@@ -38,3 +38,5 @@ $ dotfiles push
 [ArchWiki](https://wiki.archlinux.org/title/Dotfiles) — Dotfile initialization and replication.
 
 [StreakyCobra](https://news.ycombinator.com/item?id=11071754) — Example commands.
+
+[Luke Smith](https://github.com/LukeSmithxyz/voidrice) — Inspiration for this repository, statusbar scripts, and much, *much* more.
