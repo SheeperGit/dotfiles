@@ -26,14 +26,7 @@ export QT_QPA_PLATFORMTHEME="gtk2"        # Have QT use gtk2 theme.
 export XINITRC="$XDG_CONFIG_HOME"/x11/xinitrc
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority # May break some DMs.
 
-# Use XDG dirs for completion and history files
 export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
-[ -d "$XDG_STATE_HOME"/zsh ] || mkdir -p "$XDG_STATE_HOME"/zsh
-HISTFILE="$XDG_STATE_HOME"/zsh/history
-[ -d "$XDG_CACHE_HOME"/zsh ] || mkdir -p "$XDG_CACHE_HOME"/zsh
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME"/zsh/zcompcache
-compinit -d "$XDG_CACHE_HOME"/zsh/zcompdump-$ZSH_VERSION
-
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export DOTNET_CLI_HOME="$XDG_DATA_HOME"/dotnet
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc

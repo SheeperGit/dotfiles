@@ -34,9 +34,11 @@ alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
 export SUDO_EDITOR="nvim"
 alias "sudoedit"='function _sudoedit() { sudo -e "$1"; } ; _sudoedit'
 
-# History in cache directory:
+# History in state directory:
 HISTSIZE=10000
 SAVEHIST=10000
+[ -d "$XDG_STATE_HOME"/zsh ] || mkdir -p "$XDG_STATE_HOME"/zsh
+HISTFILE="$XDG_STATE_HOME"/zsh/history
 
 # Keybinds
 
