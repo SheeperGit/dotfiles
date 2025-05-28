@@ -1,0 +1,36 @@
+#!/bin/sh
+
+####################################
+# (Lora-Special) Copy to Clipboard #
+####################################
+
+# TODO: Usage
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+# Copy selection to clipboard. #
+alias xclip='xclip -r -sel clip'
+
+CLIP_TYPES='adetailer\nbooru'
+clip_type=$(
+  printf '%b' "$CLIP_TYPES" | \
+  dmenu -i -p 'Select Clip Type:'
+) || exit 1
+
+case "$clip_type" in
+  'adetailer')
+    xclip -o | sed -n '1p;2s/\(.*\(eyes, \|pupils, \)\).*/\1/p;3p;5s/\(.*\),[[:space:]]*$/\1/p' | xclip
+    exit 0
+    ;;
+
+  'booru')
+    xclip -o | sed -e 's/ /, /g' -e 's/_/ /g' -e 's/(/\\(/g' -e 's/)/\\)/g' | xclip
+    exit 0
+    ;;
+
+  *)
+    notify-send "$(basename $0) Error" "Unknown Clip Type: \'$clip_type\'"
+    exit 1
+    ;;
+esac

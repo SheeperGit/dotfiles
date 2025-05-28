@@ -27,7 +27,6 @@ alias lobster='lobster -i'
 alias zathura='zathura -l warning'
 alias wget --hsts-file="$XDG_CACHE_HOME"/wget-hsts
 
-alias booruclip="xclip -o | sed -e 's/ /, /g' -e 's/_/ /g' -e 's/(/\\(/g' -e 's/)/\\)/g' | xclip"
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
 
 # Use neovim to edit protected files with sudoedit
