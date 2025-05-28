@@ -39,7 +39,15 @@ SAVEHIST=10000
 [ -d "$XDG_STATE_HOME"/zsh ] || mkdir -p "$XDG_STATE_HOME"/zsh
 HISTFILE="$XDG_STATE_HOME"/zsh/history
 
-# Keybinds
+# Run an ssh-agent process, if there is not one already. #
+if ! pgrep -u "$USER" ssh-agent > /dev/null; then
+    ssh-agent -t 1h > "$XDG_RUNTIME_DIR/ssh-agent.env"
+fi
+if [ ! -f "$SSH_AUTH_SOCK" ]; then
+    source "$XDG_RUNTIME_DIR/ssh-agent.env" >/dev/null
+fi
+
+# Keybinds #
 
 # Make Ctrl+Left and Ctrl+Right behave like Bash
 autoload -U select-word-style
