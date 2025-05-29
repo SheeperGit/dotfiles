@@ -79,7 +79,7 @@ case "$clip_type" in
     ;;
 
   *)
-    notify-send "$(basename $0) Error" "Unknown Clip Type: \'$clip_type\'"
+    notify-send "$(basename "$0") Error" "Unknown Clip Type: \'$clip_type\'"
     exit 1
     ;;
 esac

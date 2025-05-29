@@ -24,7 +24,7 @@ UNUSED_DIR="$BASE_DIR/unused"
 
 file="$1"
 [ -z "$file" ] && {
-  notify-send "$(basename $0) Error" "No file provided to move_unused.sh"
+  notify-send "$(basename "$0") Error" "No file provided to move_unused.sh"
   exit 1
 }
 
