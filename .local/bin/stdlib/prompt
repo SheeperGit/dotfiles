@@ -1,0 +1,10 @@
+#!/bin/sh
+# A dmenu binary prompt script.
+# Gives a dmenu prompt labeled with $1 to perform command $2
+# e.g., prompt "Are you sure you want to shutdown?" "shutdown now"
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+[ "$(printf "No\nYes" | dmenu -i -p "$1")" = "Yes" ] && $2
+
