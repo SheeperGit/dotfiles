@@ -1,0 +1,24 @@
+#!/bin/sh
+
+######################
+# Launch an Emulator #
+######################
+
+# Usage: 
+#   emu
+#
+# Description: 
+#   Prompts the user for an emulator from `EMU_DIR` (a directory containing symlinks
+#   to launch the emulators) and launches it.
+
+# dmenu appearance 
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+# Emulator directory (contains symlinks to launch emulators). #
+EMU_DIR="$HOME"/emulators/.emu
+
+emu=$(
+  find "$EMU_DIR" -mindepth 1 -maxdepth 1 -printf '%f\n' | \
+  dmenu -i -p "Select Emulator:"
+) && "$EMU_DIR/$emu"
+

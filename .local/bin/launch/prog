@@ -1,0 +1,24 @@
+#!/bin/sh
+
+####################
+# Launch a Program #
+####################
+
+# Usage: 
+#   prog
+#
+# Description: 
+#   Launches a program using either symlinks or launcher scripts 
+#   from `PROG_DIR`.
+
+# dmenu appearance 
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+PROG_DIR="$HOME"/programs/.prog
+
+prog=$(
+  find "$PROG_DIR" -mindepth 1 -maxdepth 1 -printf "%f\n" | \
+  sort | \
+  dmenu -i -p 'Select Program:'
+) && "$PROG_DIR/$prog"
+
