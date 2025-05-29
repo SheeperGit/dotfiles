@@ -1,0 +1,135 @@
+#!/bin/sh
+
+###########################################
+# Streamlines unzipping process for LoRAs #
+###########################################
+
+# Usage: 
+#   lora-zip [zip-dir]
+#
+# Description: 
+#   Unzips all zipfiles in the specified directory, revise image output using `lora-feh`, 
+#   and output the result into an output directory.
+#
+#   The default output directory is: <zip-dir>/zip.out
+#
+# Examples: 
+#   lora-zip              # Runs the script in the current directory.
+#   lora-zip .            # Same as above.
+#   lora-zip path/to/dir  # Runs the script in `path/to/dir`.
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+# Set the word delimiter to `\n`. #
+IFS='
+'
+
+# Valid image types. #
+IMG_TYPES='png jpg jpeg webp'
+
+# Gets the last argument passed to it. 
+# Usage: 
+#   last_arg "$@"   # Gets the last argument passed to this script.
+last_arg() {
+  last=""
+  for arg in "$@"; do
+    last="$arg"
+  done
+
+  echo "$last"
+}
+
+# If zip-dir specfied. #
+if [ $# -gt 0 ] ; then
+  last=$(last_arg "$@")
+  CWD=$(realpath "$last")
+  [ ! -d "$CWD" ] && {
+    printf "Invalid directory: %s" "$CWD" >&2
+    exit 1
+  }
+else 
+  CWD="$(realpath .)"
+fi
+
+OUT_DIR="$CWD"/zip.out
+[ ! -d "$OUT_DIR" ] && mkdir "$OUT_DIR"
+
+ZIPFILES=$(find "$CWD" -maxdepth 5 -type f -name "*.zip")
+zip_count="$(printf "%s\n" "$ZIPFILES" | wc -l)"
+
+printf "Input Directory: %s\n" "$CWD"
+printf "Output Directory: %s\n" "$OUT_DIR"
+printf "%s zip files found.\n" "$zip_count"
+
+for zipfile in $ZIPFILES ; do
+  # Extract `zipfile` contents and remove unnecessary files. #
+  unzip -j "$zipfile"
+  rm -f "$CWD/final.jpg" "$CWD/ReadMe.txt" "$CWD/info.txt"
+
+  # Inspect `zipfile` image content. #
+  lora-feh "$CWD"
+
+  ZIPOPTS="Keep\nTrash\nDelete\nReview"
+  zopt='Review'
+  while [ "$zopt" = 'Review' ] ; do
+    zopt=$(
+      printf "%b" "$ZIPOPTS" | \
+      dmenu -i -p "Select Zip Action ($zip_count left) [Esc to Exit]:"
+    )
+
+    # Perform action. #
+    case "$zopt" in
+      'Trash')  # Move `zipfile` to Trash
+        trash "$zipfile"
+        printf "Trashed: %s\n" "$zipfile"
+        break
+        ;;
+
+      'Review') # Revisit `zipfile` image content
+        lora-feh "$CWD"
+        ;;
+
+      'Delete') # Delete `zipfile`
+        prompt "Are you sure you want to delete ${zipfile##*/}?" "rm $zipfile" && {
+          printf "Deleted: %s\n" "$zipfile"
+          break
+        }
+        zopt='Review'
+        ;;
+
+      'Keep')   # Keep `zipfile`
+        printf "Keep: %s\n" "$zipfile"
+        break
+        ;;
+
+      '')       # `Esc` key hit: Exit normally
+        printf "Esc key hit: Exiting...\n"
+        exit 0
+        ;;
+
+      *)        # Unknown
+        printf "Unknown option: %s\n" "$zopt"
+        exit 1
+        ;;
+    esac
+  done
+
+  # Rename kept images to unique filenames (via timestamps) #
+  timestamp="$(date +'%F_%T.%N')"
+  for ext in $IMG_TYPES ; do
+    rename -vi '' "${timestamp}__" -- *."$ext"
+  done
+
+  # Move images to output dir #
+  mv -i "$timestamp"__* "$OUT_DIR"
+
+  # Update remaining amount of zipfiles to be processed. #
+  zip_count=$((zip_count - 1))
+
+  # Early stop option #
+  [ "$zip_count" -ge 1 ] && \
+    [ "$(printf "No\nYes" | dmenu -i -p "Do you want to stop here? ($zip_count left)")" = 'Yes' ] && \
+    exit 0
+done
+

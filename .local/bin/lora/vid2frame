@@ -1,0 +1,52 @@
+#!/bin/sh
+
+############################################
+# Extract video frames (for LoRA training) #
+############################################
+
+## TODO:
+# This script needs LOTS of changing. 
+# Consider the following steps (not fleshed out, will likely change): 
+# 1. Given a user-provided directory, (e.g., BASE_DIR/loraname)
+#   1a. Create subdirectory BASE_DIR/loraname/vid and move all video files there
+# 2. Call lora-feh
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+# Constants: Change as necessary #
+BASE_DIR="$HOME/programs/grabber/training"
+VID_DIR="${BASE_DIR}/vid"   # Get videos from
+TMP_DIR="${BASE_DIR}/tmp"   # Extract frames to
+DST_DIR="${BASE_DIR}/dst"   # Save frames to
+FIN_DIR="${BASE_DIR}/fin"   # Move processed videos to
+#LOGFILE="${BASE_DIR}/$1_log.txt"
+
+[ ! -d "$VID_DIR" ] && { printf "Video directory does not exist!\nExiting...\n" ; exit 1 ; }
+[ ! -d "$TMP_DIR" ] && { printf "Temp directory does not exist!\nExiting...\n" ; exit 1 ; }
+[ ! -d "$DST_DIR" ] && { printf "Output directory does not exist!\nExiting...\n" ; exit 1 ; }
+[ ! -d "$FIN_DIR" ] && { printf "Finished video directory does not exist!\nExiting...\n" ; exit 1 ; }
+
+[ -z "$(ls -A "$VID_DIR")" ] && { printf "No videos found in %s\nExiting...\n" "$VID_DIR" ; exit 1 ; }
+
+for vid in "$VID_DIR"/* ; do
+  # Extract video frames
+  ffmpeg -i "$vid" -fps_mode passthrough "$TMP_DIR"/%d.png || {
+    printf "Failed to process video: %s\nExiting...\n" "$vid"
+    exit 1
+  }
+
+  # View/save desired frames
+  feh -F -S name --version-sort \
+  --action "sh -c 'mv \"%F\" \"$DST_DIR/\$(date +'%%F_%%T.%%N').png\"'" \
+  "$TMP_DIR"
+
+  # Cleanup
+  mv -vi "$vid" "$FIN_DIR"
+  rm -f "$TMP_DIR"/*
+
+  [ -n "$(ls -A "$VID_DIR")" ] && \
+    [ "$(printf "Yes\nExit" | dmenu -i -p "Move on to the next video? ($(find "$VID_DIR" -mindepth 1 -maxdepth 1 | wc -l) left)")" = "Yes" ] || \
+    exit 0
+done
+

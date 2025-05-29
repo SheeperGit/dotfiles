@@ -1,0 +1,75 @@
+#!/bin/sh
+
+##############################################
+# Image Viewer (Move to Trash img/txt pairs) #
+##############################################
+
+# Usage:
+#   lora-feh [img-dir]
+#
+# Description: 
+#   Opens a feh instance equipped with several useful actions for LoRAs. 
+#
+#   If a directory is not provided, the user is prompted to select 
+#   a directory from BASE_DIR (excluding those mentioned in EXCLUDE).
+#
+#   Actions: 
+#     0/[Enter]: Move the current image and its corresponding .txt file to Trash.
+#
+#     1: Open the current image in Gimp.
+#
+#     2: If the current image and its corresponding .txt file are in an "unused" directory 
+#        (e.g., path/to/training/unused/lora-name/), then move it back to its original directory 
+#        (e.g., path/to/training/lora-name/). Otherwise, move the image and text file to 
+#        the "unused" directory (i.e., path/to/training/unused/lora-name), creating the directory
+#        if it did not exist.
+#
+#     3: Copy the current image to clipboard. 
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+alias feh='feh --fullscreen -S name --version-sort'
+
+# Directory of LoRA training directories. #
+BASE_DIR="$HOME/programs/grabber/training"
+
+# Directories to exclude from BASE_DIR. #
+EXCLUDE='out'
+
+last_arg() {
+  last=""
+  for arg in "$@"; do
+    last="$arg"
+  done
+
+  echo "$last"
+}
+
+if [ $# -gt 0 ] ; then
+  last=$(last_arg "$@")
+  img_dir=$(realpath "$last")
+  [ ! -d "$img_dir" ] && {
+    printf 'Invalid directory: %s' "$img_dir" >&2
+    exit 1
+  }
+fi
+
+# Select the dir to browse images from. #
+[ -z "$img_dir" ] && {
+  img_dir=$(
+    find "$BASE_DIR" -mindepth 1 -type d ! -empty | \
+    grep -v -E "$BASE_DIR/($EXCLUDE)" | \
+    sed "s#$BASE_DIR/##" | \
+    dmenu -i -p "Select a Directory:"
+  ) || exit 1
+  img_dir="$BASE_DIR/$img_dir"
+}
+
+feh \
+  --action  '[Move to Trash]'"trash -vf %F \$(basename %F | sed 's/\.[^.]*$//').txt" \
+  --action1 '[Open in Gimp]'"gimp %F &" \
+  --action2 '[Move to/from Unused]'"move_unused.sh %F" \
+  --action3 '[Copy Image to Clipboard]'"xclip -sel clip -t image/png -i %F" \
+  --action4 '[Delete Range of Files]'"echo Unimplemented\n" \
+"$img_dir"/*.png "$img_dir"/*.jpg "$img_dir"/*.jpeg "$img_dir"/*.webp
+

@@ -4,7 +4,56 @@
 # (Lora-Special) Copy to Clipboard #
 ####################################
 
-# TODO: Usage
+# Usage: 
+#   lora-clip
+# 
+# Description: 
+#   Transforms the user's clipboard text into text that is often useful for 
+#   LoRA-related content. 
+#
+#   Opens a user prompt to select the clipboard transformation. 
+#   Below are the available transformations: 
+#
+#   Adetailer: 
+#     A clipboard of the form: 
+#
+#       <quality-tags>
+#       [style-tags] <character-tags>
+#       <appearing-near-face-tags>
+#       <...>
+#       [eye-tags] [face-tags]
+#       [...]
+#
+#     will remove everything up to the last eye tag in <character-tags> 
+#     and remove the trailing ', ' in [eye-tags] and [face-tags].
+#
+#   booru: 
+#     A clipboard of the form: 
+#
+#       [artist_tag...] [origin_tag...] <img_tag...>
+#
+#     will add commas (,), remove underscores (_), and escape parentheses (\(\)).
+#
+# Examples:  
+#   lora-clip (Clipboard Content: 
+#
+#     masterpiece, best quality, high quality, 
+#     <lora:artistname_style:1> artiststyle, frieren, green eyes, pointy ears, 
+#     popsicle, popsicle in mouth, 
+#     pov, from above, 
+#     looking at viewer, expressionless, 
+#     outdoors, forest, tree
+#
+#   , Clip Selection: adetailer)
+#     Returns: 
+#
+#     masterpiece, best quality, high quality, 
+#     <lora:artistname_style:1> artiststyle, frieren, green eyes, 
+#     popsicle, popsicle in mouth, 
+#     looking at viewer, expressionless
+#
+#   lora-clip (Clipboard Content: vogue neon_genesis_evangelion souryuu_asuka_langley marker_(medium) blue_eyes, Clip Selection: booru)
+#     Returns: vogue, neon genesis evangelion, souryuu asuka langley, marker \(medium\), blue eyes
 
 # dmenu appearance
 alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
