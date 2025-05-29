@@ -1,0 +1,43 @@
+#!/bin/sh
+
+#######################
+# Mount/Unmount media #
+#######################
+
+# UNFINISHED!!!
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+MNT_OPTS="Mount\nUnmount"
+MEDIA_OPTS="iso\nPhone"
+
+mode=$(
+  printf "%b" "$MNT_OPTS" | \
+  dmenu -i -p "Select Mount Action:"
+) || exit 1
+
+media=$(
+  printf "%b" "$MEDIA_OPTS" | \
+  dmenu -i -p "Select Media to Mount:"
+) || exit 2
+
+case $media in
+  "iso") 
+    echo "do something w/ $mode"
+    notify-send "PLACEHOLDER"
+    exit 10
+    ;;
+
+  "Phone") 
+    echo "do something w/ $mode"
+    notify-send "PLACEHOLDER"
+    exit 11
+    ;;
+
+  *) 
+    notify-send "The \$media variable set to unknown value: '$media'"
+    exit 50
+    ;;
+esac
+

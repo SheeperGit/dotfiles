@@ -1,0 +1,36 @@
+#!/bin/sh
+
+##########################
+# Display device battery #
+##########################
+
+######################
+## ❗ - Low battery ##
+## 🔌 - Charging    ##
+## ⚡ - Charged     ##
+######################
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+for dev in /sys/class/power_supply/*/ ; do
+	[ -f "${dev}capacity" ] && \
+	cap="$(cat "${dev}"capacity)" && \
+  devname="$(echo "$dev" | sed 's#.*/\([^/]*\)/$#\1#')" && \
+  status="$(cat "${dev}status")" && \
+  case $status in
+    Discharging) [ "$cap" -le 20 ] && icon="❗" ;;
+    Charging) icon="🔌" ;;
+    Full) icon="⚡" ;;
+    *) notify-send "Unknown device battery status: \'$status\'"
+  esac
+	devcap="$(printf "%b" "${devcap}\n${devname} -> ${icon}${cap}%")"
+done
+
+[ -z "$devcap" ] && {
+  notify-send "$(basename "$0") Error" "No Device Batteries Found!"
+  exit 1
+}
+
+printf '%b' "$devcap" | sed '1d' | dmenu -i -p 'Showing Device Battery:'
+

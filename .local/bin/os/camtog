@@ -1,0 +1,12 @@
+#!/bin/sh
+
+##################
+# Display webcam #
+##################
+
+cam=$(find /dev -maxdepth 1 -name 'video*' | sort | head -n 1)
+
+pkill -f /dev/video || \
+mpv --untimed --no-cache --no-osc --profile=low-latency \
+--geometry=-0-0 --autofit=20% --title=webcam "$cam"
+

@@ -1,0 +1,57 @@
+#!/bin/sh
+
+################################
+# Disconnect Bluetooth devices #
+################################
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+MODE_OPTS='Connect\nDisconnect'
+mode=$(
+  printf '%b' "$MODE_OPTS" | \
+  dmenu -i -p 'Select Bluetooth Action:'
+) || exit 1
+
+search_for=$(
+	# If connecting, look for devices that aren't already Connected. #
+  if [ "$mode" = "Connect" ]; then
+    conn_devs="$(bluetoothctl devices Connected)"
+    trst_devs="$(bluetoothctl devices Trusted)"
+    printf "%b" "$trst_devs" | grep -vxE "($(printf '%s' "$conn_devs" | sed 's/\\n/|/g'))"
+
+	# If disconnecting, look for Connected devices. #
+  else
+  	bluetoothctl devices Connected
+  fi
+)
+
+[ -z "$search_for" ] && {
+	case $mode in
+   	"Connect") 
+      notify-send "$(basename "$0") Error" "All Trusted Devices already connected!"
+      exit 10
+      ;;
+
+   	"Disconnect") 
+      notify-send "$(basename "$0") Error" "No Connected Devices found!"
+      exit 11
+      ;;
+
+   	*) 
+      notify-send "$(basename "$0") Error" "Unknown mode: \'$mode\'"
+      exit 50
+      ;;
+	esac
+}
+
+bt_dev=$(
+  printf '%s' "$search_for" | \
+  awk '{printf "%s %s (%s)\n", $3, $4, $2}' | \
+  dmenu -i -p "Select Device to $mode:"
+) || exit 2
+
+mode=$(echo "$mode" | tr '[:upper:]' '[:lower:]')
+mac=$(printf '%s' "$bt_dev" | sed -n 's/.*(\([^)]*\)).*/\1/p')
+bluetoothctl "$mode" "$mac"
+

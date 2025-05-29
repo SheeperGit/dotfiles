@@ -1,0 +1,14 @@
+#!/bin/sh
+
+#########################
+# Record screen & audio #
+#########################
+
+OUT_DIR="$HOME"/Videos
+FILENAME="$OUT_DIR/$(date +'%F_%T')".mkv
+
+# ffmpeg -sources alsa  # Lists audio devices
+dims=$(xdpyinfo | grep dimensions | awk '{print $2}')
+
+ffmpeg -f x11grab -s "$dims" -i :0.0 -y -f pulse -i alsa_input.usb-0c76_USB_PnP_Audio_Device-00.mono-fallback "$FILENAME"
+

@@ -1,0 +1,85 @@
+#!/bin/sh
+
+#####################
+# Take a screenshot #
+#####################
+
+# Note: All CLAs are passed directly to scrot.
+
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
+
+SCR_DIR="$HOME/Pictures/Screenshots"  # Screenshot Directory
+timestamp="$(date +'%F_%T')"          # Time of Screenshot
+scr="$SCR_DIR/$timestamp.png"         # Default Screenshot Filename
+base_scr=$(basename "$scr")           # Screenshot Basename
+
+copy_to_clipboard() {
+  xclip -sel clip -t image/png -i "$scr" && \
+    notify-send " Screenshot $base_scr copied to clipboard"
+}
+
+save_img() {
+  # Prompt user to accept either default or user-defined filename
+  while [ -z "$filename" ] ; do
+    filename="$(echo "" | dmenu -p "Enter filename (Enter for Default -> $base_scr):")" || exit 1
+    [ -z "$filename" ] && {
+      filename="$timestamp"
+      notify-send " Screenshot permanently saved as: $base_scr"
+      perma_save='Yes'
+      return 0
+    }
+    [ -f "$SCR_DIR/$filename.png" ] && {
+      filename=""
+      notify-send " Screenshot $SCR_DIR/$filename.png already exists"
+    }
+  done
+
+  mv -vi "$scr" "$SCR_DIR/$filename".png  # Rename screenshot file
+  scr="$SCR_DIR/$filename".png            # Update current screenshot name
+  base_scr=$(basename "$scr")             # Update current screenshot basename
+  filename=''                             # Reset filename (in case of another rename)
+  perma_save='Yes'                        # Prevent screenshot deletion
+
+  notify-send " Screenshot renamed to $base_scr"
+}
+
+# Save a temporary screenshot
+scrot "$@" "$scr" || exit 1
+notify-send " Temporary Screenshot saved as $base_scr"
+
+# User options
+OPTIONS='Copy to Clipboard\nSave Image'
+opt='PLACEHOLDER'
+
+# Repeatedly prompt user until they hit `Esc`. #
+while [ "$opt" != '' ] ; do
+  # Get user option. 
+  # If escaped and only a temporary copy of the screenshot exists, 
+  # delete the temporary copy.
+  opt="$(printf '%b' "$OPTIONS" | dmenu -i -p "Select Option (Esc to Exit):")" || {
+    [ -n "$perma_save" ] && exit 0
+    rm -f "$scr"
+    notify-send "$(basename "$0")" " Deleted Screenshot $base_scr"
+    exit 0
+  }
+
+  case "$opt" in 
+    'Copy to Clipboard')
+      copy_to_clipboard
+      ;;
+
+    'Save Image')
+      save_img
+      ;;
+
+    '')
+      exit 0
+      ;;
+
+    *)
+      notify-send "$(basename "$0") Error" "Unknown Option: \'$opt\'"
+      exit 1
+  esac
+done
+

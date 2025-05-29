@@ -1,0 +1,43 @@
+#!/bin/sh
+
+##############
+# Toggle pia #
+##############
+
+status=$(piactl get connectionstate)
+[ -z "$status" ] && exit 1
+
+MAX_ITERS=5
+iter=0
+pollrate=0.5
+
+if [ "$status" = 'Connected' ]; then
+  piactl disconnect && piactl background disable
+  notify-send -t 2500 "$(basename "$0")" "Disconnecting VPN from \'$(piactl get region)\'"
+
+  while [ "$(piactl get connectionstate)" != "Disconnected" ] ; do
+    sleep $pollrate
+  done
+
+  kill -38 "$(pidof dwmblocks)"
+  exit 0
+fi
+
+if [ "$status" = 'Disconnected' ] ; then
+  piactl background enable && piactl connect
+  notify-send -t 2500 "$(basename "$0")" "Connecting VPN to \'$(piactl get region)\'"
+
+  while [ "$(piactl get connectionstate)" != "Connected" ] && [ "$iter" -lt "$MAX_ITERS" ] ; do
+    iter=$((iter + 1))
+    sleep $pollrate
+  done
+
+  [ "$iter" -eq "$MAX_ITERS" ] && {
+    notify-send "$(basename "$0") Error" "Couldn't connect to VPN after $iter attempts."
+    exit 1
+  }
+
+  kill -38 "$(pidof dwmblocks)"
+  exit 0
+fi
+
