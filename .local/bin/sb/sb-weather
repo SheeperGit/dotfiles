@@ -22,8 +22,8 @@
 #
 # e.g., LOCATION='Nuremberg' sb-weather
 
-wttr=$(curl -s "wttr.in/$(echo $LOCATION | tr ' ' '+')?format=%c%t\n" | tr -d ' ')
-echo "$wttr" | grep -q '^Unknown.*' && {
+wttr=$(curl -s --connect-timeout 5 "wttr.in/$(echo $LOCATION | tr ' ' '+')?format=%c%t\n" | tr -d ' ')
+echo "$wttr" | grep -vq '.*[0-9].*' && {
   echo '🌬️N/A'
   exit 1
 }
