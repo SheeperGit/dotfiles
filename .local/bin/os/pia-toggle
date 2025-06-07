@@ -9,7 +9,7 @@ status=$(piactl get connectionstate)
 
 MAX_ITERS=5
 iter=0
-pollrate=0.5
+pollrate=2
 
 if [ "$status" = 'Connected' ]; then
   piactl disconnect && piactl background disable
@@ -32,8 +32,8 @@ if [ "$status" = 'Disconnected' ] ; then
     sleep $pollrate
   done
 
-  [ "$iter" -eq "$MAX_ITERS" ] && {
-    notify-send "$(basename "$0") Error" "Couldn't connect to VPN after $iter attempts."
+  [ "$iter" -eq "$MAX_ITERS" ] && [ "$(piactl get connectionstate)" != "Connected" ] && {
+    notify-send "$(basename "$0") Error" "Couldn't connect to VPN after $iter attempts lasting $pollrate seconds."
     exit 1
   }
 
