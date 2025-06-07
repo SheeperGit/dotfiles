@@ -69,12 +69,18 @@ clip_type=$(
 
 case "$clip_type" in
   'adetailer')
-    xclip -o | sed -n '1p;2s/\(.*\(eyes, \|pupils, \)\).*/\1/p;3p;5s/\(.*\),[[:space:]]*$/\1/p' | xclip
+    xclip -o | \
+      sed -n '1p;2s/\(.*\(eyes, \|eye, \|pupils, \|eyelashes, \|eyeshadow, \|eyeliner, \|makeup\)\).*/\1/p;3p;5s/\(.*\),[[:space:]]*$/\1/p' | \
+      xclip
+
     exit 0
     ;;
 
   'booru')
-    xclip -o | sed -e 's/ /, /g' -e 's/_/ /g' -e 's/(/\\(/g' -e 's/)/\\)/g' | xclip
+    xclip -o | \
+      sed -e 's/ /, /g' -e 's/_/ /g' -e 's/(/\\(/g' -e 's/)/\\)/g' | \
+      xclip
+
     exit 0
     ;;
 
