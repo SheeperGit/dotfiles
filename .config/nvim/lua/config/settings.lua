@@ -19,7 +19,7 @@ vim.opt.shiftwidth = 2
 vim.opt.expandtab = true
 
 -- Set vim clipboard to sys clipboard (allows clipboard sharing to and from vim)
-vim.api.nvim_set_option("clipboard", "unnamed")
+vim.opt.clipboard = "unnamedplus"
 
 -- Bolded white line number where cursor is present
 vim.api.nvim_set_hl(0, 'CursorLineNr', { fg='white', bold=true })
