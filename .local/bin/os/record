@@ -40,6 +40,8 @@ killrecording() {
 	rm -f /tmp/recordingpid
 	updateicon ""
 	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}"
+
+  notify-send -t 1000 "$(basename "$0")" "Recording ended"
 }
 
 screencast() {
@@ -117,18 +119,11 @@ askrecording() {
 	esac
 }
 
-asktoend() {
-	response=$(
-    printf "No\nYes" | \
-    dmenu -i -p "Recording still active. End recording?"
-  ) && [ "$response" = "Yes" ] && killrecording
-}
-
 case "$1" in
 	screencast) screencast;;
 	audio) audio;;
 	video) video;;
 	kill) killrecording;;
-	*) ([ -f /tmp/recordingpid ] && asktoend && exit) || askrecording;;
+	*) ([ -f /tmp/recordingpid ] && killrecording && exit) || askrecording;;
 esac
 
