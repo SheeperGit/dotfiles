@@ -15,7 +15,11 @@ alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbb
 ## Config ##
 OUT_DIR="$HOME"/Videos  ## Output Directory.
 SND_SVR='pulse'         ## Sound Server.
-############
+
+## Icons ##
+ICON_REC='•'
+ICON_MIC='🎙️'
+ICON_CAM='📹'
 
 dims() {
   xdpyinfo | grep 'dimensions' | awk '{print $2}'
@@ -52,7 +56,7 @@ screencast() {
 	"$OUT_DIR/screencast-$(rectime).mp4" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "⏺️🎙️"
+	updateicon "${ICON_REC}${ICON_MIC}"
 }
 
 video() {
@@ -65,7 +69,7 @@ video() {
 	"$OUT_DIR/video-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "⏺️"
+  updateicon "${ICON_REC}"
 }
 
 webcamhidef() {
@@ -76,7 +80,7 @@ webcamhidef() {
 	"$OUT_DIR/webcam-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "🎥"
+	updateicon "${ICON_CAM}"
 }
 
 webcam() {
@@ -87,7 +91,7 @@ webcam() {
 	"$OUT_DIR/webcam-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "🎥"
+	updateicon "${ICON_CAM}"
 }
 
 audio() {
@@ -97,7 +101,7 @@ audio() {
 	"$OUT_DIR/audio-$(rectime).flac" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "🎙️"
+	updateicon "${ICON_MIC}"
 }
 
 askrecording() {
