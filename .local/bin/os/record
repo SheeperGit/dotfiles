@@ -1,14 +1,130 @@
 #!/bin/sh
 
-#########################
-# Record screen & audio #
-#########################
+##############################
+# Record screen/audio/webcam #
+##############################
 
-OUT_DIR="$HOME"/Videos
-FILENAME="$OUT_DIR/$(date +'%F_%T')".mkv
+# Note: My main microphone has input ID: alsa_input.usb-0c76_USB_PnP_Audio_Device-00.mono-fallback
+#       Replace this ID w/ `default`, if necessary.
+#
+# Note: videoselected() is excluded from the list of options.
 
-# ffmpeg -sources alsa  # Lists audio devices
-dims=$(xdpyinfo | grep dimensions | awk '{print $2}')
+# dmenu appearance
+alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
 
-ffmpeg -f x11grab -s "$dims" -i :0.0 -y -f pulse -i alsa_input.usb-0c76_USB_PnP_Audio_Device-00.mono-fallback "$FILENAME"
+## Config ##
+OUT_DIR="$HOME"/Videos  ## Output Directory.
+SND_SVR='pulse'         ## Sound Server.
+############
+
+dims() {
+  xdpyinfo | grep 'dimensions' | awk '{print $2}'
+}
+
+rectime() {
+  date +'%F__%T'
+}
+
+updateicon() {
+	echo "$1" > /tmp/recordingicon
+	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}"
+}
+
+killrecording() {
+	recpid="$(cat /tmp/recordingpid)"
+	kill -TERM "$recpid"
+	rm -f /tmp/recordingpid
+	updateicon ""
+	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}"
+}
+
+screencast() {
+	ffmpeg -y \
+	-f x11grab \
+	-framerate 30 \
+	-s "$(dims)" \
+	-i "$DISPLAY" \
+	-r 24 \
+	-use_wallclock_as_timestamps 1 \
+	-f "$SND_SVR" -thread_queue_size 1024 -i default \
+ 	-c:v h264 \
+	-crf 0 -preset ultrafast -c:a aac \
+	"$OUT_DIR/screencast-$(rectime).mp4" &
+
+	echo $! > /tmp/recordingpid
+	updateicon "⏺️🎙️"
+}
+
+video() {
+  ffmpeg \
+	-f x11grab \
+	-framerate 30 \
+	-s "$(dims)" \
+	-i "$DISPLAY" \
+ 	-c:v libx264 -qp 0 -r 30 \
+	"$OUT_DIR/video-$(rectime).mkv" &
+
+	echo $! > /tmp/recordingpid
+	updateicon "⏺️"
+}
+
+webcamhidef() {
+  ffmpeg \
+	-f v4l2 \
+	-i /dev/video0 \
+	-video_size 1920x1080 \
+	"$OUT_DIR/webcam-$(rectime).mkv" &
+
+	echo $! > /tmp/recordingpid
+	updateicon "🎥"
+}
+
+webcam() {
+  ffmpeg \
+	-f v4l2 \
+	-i /dev/video0 \
+	-video_size 640x480 \
+	"$OUT_DIR/webcam-$(rectime).mkv" &
+
+	echo $! > /tmp/recordingpid
+	updateicon "🎥"
+}
+
+audio() {
+	ffmpeg \
+	-f "$SND_SVR" -i default \
+	-c:a flac \
+	"$OUT_DIR/audio-$(rectime).flac" &
+
+	echo $! > /tmp/recordingpid
+	updateicon "🎙️"
+}
+
+askrecording() {
+  REC_STYLES='screencast\nvideo\naudio\nwebcam\nwebcam (hi-def)'
+	choice=$(printf '%b' "$REC_STYLES" | dmenu -i -p "Select recording style:")
+
+	case "$choice" in
+		screencast) screencast;;
+		audio) audio;;
+		video) video;;
+		webcam) webcam;;
+		"webcam (hi-def)") webcamhidef;;
+	esac
+}
+
+asktoend() {
+	response=$(
+    printf "No\nYes" | \
+    dmenu -i -p "Recording still active. End recording?"
+  ) && [ "$response" = "Yes" ] && killrecording
+}
+
+case "$1" in
+	screencast) screencast;;
+	audio) audio;;
+	video) video;;
+	kill) killrecording;;
+	*) ([ -f /tmp/recordingpid ] && asktoend && exit) || askrecording;;
+esac
 
