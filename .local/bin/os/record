@@ -17,7 +17,7 @@ OUT_DIR="$HOME"/Videos  ## Output Directory.
 SND_SVR='pulse'         ## Sound Server.
 
 ## Icons ##
-ICON_REC='•'
+ICON_REC='🔴'
 ICON_MIC='🎙️'
 ICON_CAM='📹'
 
@@ -56,7 +56,7 @@ screencast() {
 	"$OUT_DIR/screencast-$(rectime).mp4" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "${ICON_REC}${ICON_MIC}"
+	updateicon "REC ${ICON_REC}${ICON_MIC}"
 }
 
 video() {
@@ -69,7 +69,7 @@ video() {
 	"$OUT_DIR/video-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-  updateicon "${ICON_REC}"
+  updateicon "REC ${ICON_REC}"
 }
 
 webcamhidef() {
@@ -80,7 +80,7 @@ webcamhidef() {
 	"$OUT_DIR/webcam-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "${ICON_CAM}"
+	updateicon "REC ${ICON_CAM}"
 }
 
 webcam() {
@@ -91,7 +91,7 @@ webcam() {
 	"$OUT_DIR/webcam-$(rectime).mkv" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "${ICON_CAM}"
+	updateicon "REC ${ICON_CAM}"
 }
 
 audio() {
@@ -101,7 +101,7 @@ audio() {
 	"$OUT_DIR/audio-$(rectime).flac" &
 
 	echo $! > /tmp/recordingpid
-	updateicon "${ICON_MIC}"
+	updateicon "REC ${ICON_MIC}"
 }
 
 askrecording() {
