@@ -22,7 +22,7 @@ copy_to_clipboard() {
 save_img() {
   # Prompt user to accept either default or user-defined filename
   while [ -z "$filename" ] ; do
-    filename="$(echo "" | dmenu -p "Enter filename (Enter for Default -> $base_scr):")" || exit 1
+    filename="$(dmenu -p "Enter filename (Enter for Default -> $base_scr):" <&-)" || exit 1
     [ -z "$filename" ] && {
       filename="$timestamp"
       notify-send " Screenshot permanently saved as: $base_scr"

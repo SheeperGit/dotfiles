@@ -29,7 +29,7 @@ launch_method=$(
 
 case "$launch_method" in 
   'Steam')
-    game_name=$(echo '' | dmenu -i -p 'Enter Game Name:') || exit 1
+    game_name=$(dmenu -i -p 'Enter Game Name:' <&-) || exit 1
     game_url="https://store.steampowered.com/api/storesearch/?term=$(printf '%s' "$game_name" | jq -sRr @uri)&cc=us"
 
     # Get a list of games with similar names. #
