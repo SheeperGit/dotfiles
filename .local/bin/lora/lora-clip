@@ -69,8 +69,11 @@ clip_type=$(
 
 case "$clip_type" in
   'adetailer')
+    EYE_TAGS='eyes|eye|pupils|eyelashes|eyeshadow|eyeliner|makeup|glasses|eyewear'
+    EYE_TAGS=$(printf '%s' "$EYE_TAGS" | sed 's/|/, \\|/g')
+
     xclip -o | \
-      sed -n '1p;2s/\(.*\(eyes, \|eye, \|pupils, \|eyelashes, \|eyeshadow, \|eyeliner, \|makeup\)\).*/\1/p;3p;5s/\(.*\),[[:space:]]*$/\1/p' | \
+      sed -n "1p;2s/\(.*\(${EYE_TAGS}\)\).*/\1/p;3p;5s/\(.*\),[[:space:]]*$/\1/p" | \
       xclip
 
     exit 0
