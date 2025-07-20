@@ -1,0 +1,11 @@
+#!/bin/sh
+
+######################################
+# Updates volume display (dwmblocks) #
+######################################
+
+# Monitor changes to default audio device #
+pactl subscribe | grep --line-buffered "change.*sink" | while read -r _; do
+  kill -44 "$(pidof dwmblocks)" # Restart volume display
+done
+
