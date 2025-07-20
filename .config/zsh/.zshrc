@@ -4,6 +4,9 @@
 autoload -U colors && colors
 PS1="%B%{$fg[red]%}[%{$fg[yellow]%}%n%{$fg[green]%}@%{$fg[blue]%}%M %{$fg[magenta]%}%~%{$fg[red]%}]%{$reset_color%}$%b "
 
+# Set tab size
+tabs 2
+
 # Command aliases
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
