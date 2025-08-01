@@ -41,6 +41,7 @@ HISTSIZE=10000
 SAVEHIST=10000
 [ -d "$XDG_STATE_HOME"/zsh ] || mkdir -p "$XDG_STATE_HOME"/zsh
 HISTFILE="$XDG_STATE_HOME"/zsh/history
+setopt incappendhistory # Update HISTFILE after every typed command
 
 # Run an ssh-agent process, if there is not one already. #
 if ! pgrep -u "$USER" ssh-agent > /dev/null; then
