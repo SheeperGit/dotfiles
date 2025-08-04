@@ -1,35 +1,51 @@
--- Enable 24-bit colors
-vim.opt.termguicolors = true
+-- Style
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+vim.api.nvim_set_hl(0, "CursorLine", { bg = "black" })
+vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "white", bold = true })
 
--- Show line numbers
-vim.opt.number = true
+-- Basic settings
+vim.opt.number = true                              -- Line numbers
+vim.opt.relativenumber = true                      -- Relative line numbers
+vim.opt.cursorline = true                          -- Highlight current line
+vim.opt.wrap = false                               -- Don't wrap lines
+vim.opt.scrolloff = 10                             -- Keep 10 lines above/below cursor 
+vim.opt.sidescrolloff = 8                          -- Keep 8 columns left/right of cursor
 
--- Enable mouse mode (useful for resizing splits)
-vim.opt.mouse = 'a'
+-- Visual settings
+vim.opt.termguicolors = true                       -- Enable 24-bit colors
 
--- Highlight the line your cursor is on
-vim.opt.cursorline = true
+-- Behaviour 
+vim.opt.clipboard = "unnamedplus"                  -- Use system clipboard
+vim.opt.mouse = 'a'                                -- Enable mouse support
 
--- Always have at least 8 lines visible when scrolling
-vim.opt.scrolloff = 8
+-- Indentation
+vim.opt.tabstop = 2                                -- Tab width
+vim.opt.shiftwidth = 2                             -- Indent width
+vim.opt.softtabstop = 2                            -- Soft tab stop
+vim.opt.expandtab = true                           -- Use spaces instead of tabs
+vim.opt.smartindent = true                         -- Smart auto-indenting
+vim.opt.autoindent = true                          -- Copy indent from current line
 
--- Tab spacing
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
-vim.opt.expandtab = true
+-- Search settings
+vim.opt.ignorecase = true                          -- Case insensitive search
+vim.opt.smartcase = true                           -- Case sensitive if uppercase in search
+vim.opt.hlsearch = false                           -- Don't highlight search results 
+vim.opt.incsearch = true                           -- Show matches as you type
 
--- Set vim clipboard to sys clipboard (allows clipboard sharing to and from vim)
-vim.opt.clipboard = "unnamedplus"
+-- File handling
+vim.opt.backup = false                             -- Don't create backup files
+vim.opt.writebackup = false                        -- Don't create backup before writing
+vim.opt.swapfile = false                           -- Don't create swap files
+vim.opt.undofile = true                            -- Persistent undo
+vim.opt.updatetime = 300                           -- Faster completion
+vim.opt.timeoutlen = 500                           -- Key timeout duration
+vim.opt.ttimeoutlen = 0                            -- Key code timeout
+vim.opt.autoread = true                            -- Auto reload files changed outside vim
+vim.opt.autowrite = false                          -- Don't auto save
 
--- Bolded white line number where cursor is present
-vim.api.nvim_set_hl(0, 'CursorLineNr', { fg='white', bold=true })
+-- Split behavior
+vim.opt.splitright = true                          -- Vertical splits go right
+vim.opt.splitbelow = true                          -- Horizontal splits go below
 
--- Black highlight on cursor line
-vim.api.nvim_set_hl(0, 'CursorLine', { bg = "#000000" })
-
--- Transparent statusline
-vim.cmd "hi statusline guibg=NONE"
-
--- General transparent bg set
---vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
---vim.api.nvim_set_hl(0, "NonText", { bg = "none" })

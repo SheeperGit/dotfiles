@@ -1,10 +1,3 @@
-require("config.settings")
 require("config.lazy")
+require("config.settings")
 
-require('nightfox').setup({
-	options = { 
-		transparent = true,
-	},
-})
-
-vim.cmd "colorscheme carbonfox"
