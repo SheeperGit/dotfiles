@@ -116,7 +116,7 @@ for zipfile in $ZIPFILES ; do
   done
 
   # Rename kept images to unique filenames (via timestamps) #
-  timestamp="$(date +'%F_%T.%N')"
+  timestamp="$(date +'%F_%H-%M-%S.%N')"
   for ext in $IMG_TYPES ; do
     rename -vi '' "${timestamp}__" -- *."$ext"
   done
