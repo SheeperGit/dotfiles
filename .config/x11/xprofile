@@ -7,4 +7,3 @@ bluetoothctl power on
 
 ~/.fehbg &
 
-exec dwm
