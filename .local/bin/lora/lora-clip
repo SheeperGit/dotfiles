@@ -69,7 +69,7 @@ clip_type=$(
 
 case "$clip_type" in
   'adetailer')
-    EYE_TAGS='eyes|eye|pupils|eyelashes|eyeshadow|eyeliner|makeup|glasses|eyewear'
+    EYE_TAGS='eyes|eye|pupils|eyelashes|eyeshadow|eyeliner|makeup|glasses|eyewear|mask|facepaint'
     EYE_TAGS=$(printf '%s' "$EYE_TAGS" | sed 's/|/, \\|/g')
 
     xclip -o | \
