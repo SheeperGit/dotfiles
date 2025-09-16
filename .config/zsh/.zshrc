@@ -27,7 +27,7 @@ alias pacr='sudo pacman -Rnus'
 alias yays='yay -S --answerclean All --answerdiff None'
 alias yayr='yay -Rnus'
 alias lobster='lobster -i'
-alias zathura='zathura -l warning'
+alias zathura='zathura -l error'
 alias wget --hsts-file="$XDG_CACHE_HOME"/wget-hsts
 
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
