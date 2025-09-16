@@ -22,9 +22,10 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache
 
-export QT_QPA_PLATFORMTHEME='qt5ct'
 export XINITRC="$XDG_CONFIG_HOME"/x11/xinitrc
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority # May break some DMs.
+export XCURSOR_PATH=/usr/share/icons:~/.local/share/icons
+export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
@@ -32,6 +33,7 @@ export DOTNET_CLI_HOME="$XDG_DATA_HOME"/dotnet
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
 export PYTHONSTARTUP="$XDG_CONFIG_HOME"/python/pythonrc
+export PYTHON_HISTORY=$XDG_STATE_HOME/python_history
 export WINEPREFIX="$XDG_DATA_HOME"/wine
 export NUGET_PACKAGES="$XDG_CACHE_HOME"/NuGetPackages
 export GOPATH="$XDG_DATA_HOME"/go
