@@ -14,14 +14,14 @@ export HISTFILE="$XDG_STATE_HOME"/bash/history
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/sheep/programs/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+__conda_setup="$("$HOME/programs/miniconda3/bin/conda" 'shell.bash' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/home/sheep/programs/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/sheep/programs/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "$HOME/programs/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/programs/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/home/sheep/programs/miniconda3/bin:$PATH"
+        export PATH="$HOME/programs/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
