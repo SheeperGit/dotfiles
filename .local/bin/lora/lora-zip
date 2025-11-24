@@ -26,7 +26,10 @@ IFS='
 '
 
 # Valid image types. #
-IMG_TYPES='png jpg jpeg webp'
+IMG_TYPES='png
+jpg
+jpeg
+webp'
 
 # Gets the last argument passed to it. 
 # Usage: 
