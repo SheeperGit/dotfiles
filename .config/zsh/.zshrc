@@ -28,7 +28,7 @@ alias yays='yay -S --needed --answerclean All --answerdiff None'
 alias yayr='yay -Rnus'
 alias zathura='zathura -l error'
 alias wget --hsts-file="$XDG_CACHE_HOME"/wget-hsts
-alias yt-dlp='yt-dlp -x -f bestaudio --embed-metadata --embed-thumbnail --embed-subs -P ~/Music'
+alias yt-dlp='yt-dlp -x -f bestaudio --embed-metadata --embed-thumbnail --embed-subs'
 
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
 
