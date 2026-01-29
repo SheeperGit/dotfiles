@@ -21,72 +21,8 @@
 # dmenu appearance 
 alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
 
-GAME_LOCS='Local\nSteam'
-launch_method=$(
-  printf '%b' "$GAME_LOCS" | \
-  dmenu -i -p 'Select Game Launch Method:'
-) || exit 1
-
-case "$launch_method" in 
-  'Steam')
-    game_name=$(dmenu -i -p 'Enter Game Name:' <&-) || exit 1
-    game_url="https://store.steampowered.com/api/storesearch/?term=$(printf '%s' "$game_name" | jq -sRr @uri)&cc=us"
-
-    # Get a list of games with similar names. #
-    game_list=$(curl -s "$game_url" | \
-      jq -r '
-        .items[] | 
-        "\(.name), GameID: \(.id)"
-      '
-    )
-
-    [ -z "$game_list" ] && {
-      notify-send "$(basename "$0") Error" "Game name: \'$game_name\' not found!"
-      exit 1
-    }
-   
-    # Prompt user for game from game list. #
-    game=$(
-      printf '%b' "$game_list" | \
-      dmenu -l 10 -i -p "Select Steam Game"
-    ) || exit 1
-
-    # Extract game ID. #
-    game_id=$(printf '%s' "$game" | sed 's/.*GameID: //')
-
-    if echo "$game_id" | grep -q '^[0-9][0-9]*$' ; then
-      CLOSE_STEAM=1 steam -silent steam://rungameid/"$game_id"
-    else
-      notify-send "$(basename "$0") Error" "\'$game_id\' is not a valid GameID."
-      exit 1
-    fi
-
-    exit 0
-    ;;
-
-  'Local')
-    GAME_DIR="$HOME/games/.games"
-    game=$(
-      find "$GAME_DIR" -mindepth 1 -maxdepth 1 -printf '%f\n' | \
-      dmenu -i -p "Select Game:"
-    ) || exit 1
-
-    game="$GAME_DIR/$game"
-    if [ -L "$game" ] ; then
-      proton_runner "$game"
-    elif [ -x "$game" ] ; then
-      "$game"
-    else
-      notify-send "$(basename "$0") Error" "$game is neither a symlink or an executable (launcher)!"
-      exit 1
-    fi
-
-    exit 0
-    ;;
-
-  *)
-    notify-send "$(basename "$0") Error" "Invalid Launch Method: \'$launch_method\'"
-    exit 1
-    ;;
-esac
+game=$(
+	sqlite3 ~/.local/share/lutris/pga.db "SELECT slug FROM games;" | \
+	dmenu -i -p 'Select Game:'
+) && lutris lutris:rungame/"$game"
 
