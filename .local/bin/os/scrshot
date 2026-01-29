@@ -46,7 +46,6 @@ save_img() {
 
 # Save a temporary screenshot
 scrot "$@" "$scr" || exit 1
-notify-send " Temporary Screenshot saved as $base_scr"
 
 # User options
 OPTIONS='Copy to Clipboard\nSave Image'
@@ -60,7 +59,6 @@ while [ "$opt" != '' ] ; do
   opt="$(printf '%b' "$OPTIONS" | dmenu -i -p "Select Option (Esc to Exit):")" || {
     [ -n "$perma_save" ] && exit 0
     rm -f "$scr"
-    notify-send "$(basename "$0")" " Deleted Screenshot $base_scr"
     exit 0
   }
 
