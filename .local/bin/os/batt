@@ -14,21 +14,25 @@
 alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
 
 for dev in /sys/class/power_supply/*/ ; do
-	[ -f "${dev}capacity" ] && \
-	cap="$(cat "${dev}"capacity)" && \
-  devname="$(echo "$dev" | sed 's#.*/\([^/]*\)/$#\1#')" && \
-  status="$(cat "${dev}status")" && \
+	# Ensure device has a capacity. #
+	[ -f "${dev}capacity" ] || continue
+
+	cap="$(cat "${dev}"capacity)"
+  devname="$(echo "$dev" | sed 's#.*/\([^/]*\)/$#\1#')"
+  status="$(cat "${dev}status")"
+
   case $status in
     Discharging) [ "$cap" -le 20 ] && icon="❗" ;;
     Charging) icon="🔌" ;;
     Full) icon="⚡" ;;
-    *) notify-send "Unknown device battery status: \'$status\'"
+    *) notify-send "$(basename "$0") Error" "Unknown device battery status: $status"
   esac
-	devcap="$(printf "%b" "${devcap}\n${devname} -> ${icon}${cap}%")"
+
+	devcap="$(printf '%b' "${devcap}\n${devname} -> ${icon}${cap}%")"
 done
 
 [ -z "$devcap" ] && {
-  notify-send "$(basename "$0") Error" "No Device Batteries Found!"
+	notify-send "$(basename "$0") Error" "No device batteries found!"
   exit 1
 }
 
