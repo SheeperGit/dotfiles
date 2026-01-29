@@ -24,7 +24,7 @@ export XDG_CACHE_HOME=$HOME/.cache
 
 export XINITRC="$XDG_CONFIG_HOME"/x11/xinitrc
 export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority # May break some DMs.
-export XCURSOR_PATH=/usr/share/icons:~/.local/share/icons
+export XCURSOR_PATH=/usr/share/icons:$XDG_DATA_HOME/icons
 export XCURSOR_THEME=breeze_cursors
 export QT_QPA_PLATFORMTHEME=qt5ct
 
@@ -42,11 +42,16 @@ export GOMODCACHE="$XDG_CACHE_HOME"/go/mod
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export WGETRC="$XDG_CONFIG_HOME"/wget/wgetrc
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export BN_USER_DIRECTORY="$XDG_CONFIG_HOME"/binaryninja
 
 # Command aliases
 
 # Private environment variables. Usually used for scripts.
-[ -f "$PATH_DIR/.private/location" ] && source "$PATH_DIR/.private/location"
+if [ -d "$PATH_DIR/.private" ]; then
+  for f in "$PATH_DIR/.private"/*; do
+    [ -f "$f" ] && source "$f"
+  done
+fi
 
 # Start graphical server on user's current tty if not already running.
 [ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx "$XINITRC"
