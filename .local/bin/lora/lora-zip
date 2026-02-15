@@ -25,12 +25,6 @@ alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbb
 IFS='
 '
 
-# Valid image types. #
-IMG_TYPES='png
-jpg
-jpeg
-webp'
-
 # Gets the last argument passed to it. 
 # Usage: 
 #   last_arg "$@"   # Gets the last argument passed to this script.
@@ -58,6 +52,10 @@ fi
 OUT_DIR="$CWD"/zip.out
 [ ! -d "$OUT_DIR" ] && mkdir "$OUT_DIR"
 
+# Excluded zipfiles to extract. #
+XZIPFILES='*.txt
+final.jpg'
+
 ZIPFILES=$(find "$CWD" -maxdepth 5 -type f -name "*.zip")
 zip_count="$(printf "%s\n" "$ZIPFILES" | wc -l)"
 
@@ -66,14 +64,20 @@ printf "Output Directory: %s\n" "$OUT_DIR"
 printf "%s zip files found.\n" "$zip_count"
 
 for zipfile in $ZIPFILES ; do
+	# List extracted files ahead of time. #
+	files="$(unzip -Z1 "$zipfile" -x $XZIPFILES | awk -v dir="$CWD" -F/ '!/\/$/ {print dir "/" $NF}')"
+
   # Extract `zipfile` contents and remove unnecessary files. #
-  unzip -j "$zipfile"
-  rm -f "$CWD/final.jpg" "$CWD/ReadMe.txt" "$CWD/info.txt"
+  unzip -j "$zipfile" -x $XZIPFILES
+
+  set -f        # Disable globbing.
+  set -- $files	# Split on IFS='\n'.
+  set +f        # Re-enable globbing. 
 
   # Inspect `zipfile` image content. #
-  lora-feh "$CWD"
+  lora-feh "$@"
 
-  ZIPOPTS="Keep\nTrash\nDelete\nReview"
+  ZIPOPTS="Trash\nKeep\nDelete\nReview"
   zopt='Review'
   while [ "$zopt" = 'Review' ] ; do
     zopt=$(
@@ -90,7 +94,7 @@ for zipfile in $ZIPFILES ; do
         ;;
 
       'Review') # Revisit `zipfile` image content
-        lora-feh "$CWD"
+        lora-feh "$@"
         ;;
 
       'Delete') # Delete `zipfile`
@@ -120,12 +124,10 @@ for zipfile in $ZIPFILES ; do
 
   # Rename kept images to unique filenames (via timestamps) #
   timestamp="$(date +'%F_%H-%M-%S.%N')"
-  for ext in $IMG_TYPES ; do
-    rename -vi '' "${timestamp}__" -- *."$ext"
-  done
+  rename -vi '' "${timestamp}__" -- "$@"
 
   # Move images to output dir #
-  mv -i "$timestamp"__* "$OUT_DIR"
+  mv -i "$CWD/${timestamp}"__* "$OUT_DIR"
 
   # Update remaining amount of zipfiles to be processed. #
   zip_count=$((zip_count - 1))
