@@ -5,5 +5,5 @@ xset s off -dpms
 
 bluetoothctl power on
 
-~/.fehbg &
+feh --no-fehbg --bg-fill '/home/sheep/Pictures/bg/darkroad.jpg' &
 
