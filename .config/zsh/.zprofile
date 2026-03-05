@@ -28,7 +28,6 @@ export XCURSOR_PATH=/usr/share/icons:$XDG_DATA_HOME/icons
 export XCURSOR_THEME=breeze_cursors
 export QT_QPA_PLATFORMTHEME=qt5ct
 
-export ZDOTDIR="$XDG_CONFIG_HOME"/zsh
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
 export DOTNET_CLI_HOME="$XDG_DATA_HOME"/dotnet
 export GTK2_RC_FILES="$XDG_CONFIG_HOME"/gtk-2.0/gtkrc
@@ -43,6 +42,7 @@ export CARGO_HOME="$XDG_DATA_HOME"/cargo
 export WGETRC="$XDG_CONFIG_HOME"/wget/wgetrc
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 export BN_USER_DIRECTORY="$XDG_CONFIG_HOME"/binaryninja
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
 
 # Command aliases
 
