@@ -25,7 +25,6 @@
 wttr=$(curl -s --max-time 5 "wttr.in/$(echo $LOCATION | tr ' ' '+')?format=%c%t\n" | tr -d ' ')
 echo "$wttr" | grep -vq '.*°.*' && {
   echo '🌬️N/A'
-  exit 1
 }
 
 echo "$wttr"
