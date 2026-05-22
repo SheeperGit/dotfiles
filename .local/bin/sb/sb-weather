@@ -22,6 +22,13 @@
 #
 # e.g., LOCATION='Nuremberg' sb-weather
 
+case $BLOCK_BUTTON in
+	3) notify-send "🌤️ Weather module" "\- Shows weather ☀️, 🌬️ if unavailable.
+- Right click to display this help message.
+- Left shift + Scroll up to open this module in an editor." ;;
+	6) setsid -f "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
 wttr=$(curl -s --max-time 5 "wttr.in/$(echo $LOCATION | tr ' ' '+')?format=%c%t\n" | tr -d ' ')
 echo "$wttr" | grep -vq '.*°.*' && {
   echo '🌬️N/A'
