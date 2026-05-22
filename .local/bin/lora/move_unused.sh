@@ -19,10 +19,10 @@
 #   move_unused.sh filename.jpg   # Apply the move to `filename.jpg` and `filename.txt`.
 #   move_unused.sh filename.pdf   # Weird usage, but possible. This script is meant for img/txt filename pairs.
 
-BASE_DIR="$HOME/programs/grabber/training"
+BASE_DIR="$HOME/programs/sd-scripts/training"
 UNUSED_DIR="$BASE_DIR/unused"
 
-file="$1"
+file="$(realpath "$1")"
 [ -z "$file" ] && {
   notify-send "$(basename "$0") Error" "No file provided to move_unused.sh"
   exit 1
