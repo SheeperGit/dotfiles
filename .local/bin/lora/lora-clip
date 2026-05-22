@@ -55,9 +55,6 @@
 #   lora-clip (Clipboard Content: vogue neon_genesis_evangelion souryuu_asuka_langley marker_(medium) blue_eyes, Clip Selection: booru)
 #     Returns: vogue, neon genesis evangelion, souryuu asuka langley, marker \(medium\), blue eyes
 
-# dmenu appearance
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
-
 # Copy selection to clipboard. #
 alias xclip='xclip -r -sel clip'
 
@@ -69,7 +66,7 @@ clip_type=$(
 
 case "$clip_type" in
   'adetailer')
-    EYE_TAGS='eyes|eye|pupils|eyelashes|eyeshadow|eyeliner|makeup|glasses|eyewear|mask|facepaint|sclera|END'
+    EYE_TAGS='eyes|eye|-eyed|pupils|eyelashes|eyeshadow|eyeliner|makeup|glasses|eyewear|mask|facepaint|sclera|END'
     EYE_TAGS=$(printf '%s' "$EYE_TAGS" | sed 's/|/, \\|/g')
 
     xclip -o | \
