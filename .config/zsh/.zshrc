@@ -21,20 +21,37 @@ alias mkdir='mkdir -vp'
 alias ln='ln -v'
 alias xclip='xclip -r -sel clip'
 alias feh='feh --fullscreen -S name --version-sort'
+alias mpv='mpv --loop'
 alias lf='lfub'
 alias pacs='sudo pacman -Sy --needed'
 alias pacr='sudo pacman -Rnus'
 alias yays='yay -S --needed --answerclean All --answerdiff None'
 alias yayr='yay -Rnus'
-alias zathura='zathura -l error'
+alias v='nvim'
+alias z='zathura -l error'
 alias wget --hsts-file="$XDG_CACHE_HOME"/wget-hsts
-alias yt-dlp='yt-dlp -x -f bestaudio --embed-metadata --embed-thumbnail --embed-subs'
+alias yt-dlp='yt-dlp -x -f bestaudio --embed-metadata --embed-thumbnail --embed-subs --no-playlist'
 
 alias dotfiles='/usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME"'
+alias penv='source venv/bin/activate'
 
 # Use neovim to edit protected files with sudoedit
 export SUDO_EDITOR="nvim"
 alias "sudoedit"='function _sudoedit() { sudo -e "$1"; } ; _sudoedit'
+
+# Functions. #
+
+# Print unique file extensions in the `$1` directory. #
+exts() {
+  find "$1" -type f -print0 \
+    | xargs -0 -n1 basename \
+    | sed -n 's/^.*\.//p' \
+    | sort -u
+}
+
+edit() {
+	"$EDITOR" "$(which "$1")"
+}
 
 # History in state directory:
 HISTSIZE=10000
