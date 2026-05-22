@@ -26,6 +26,11 @@ vim.opt.softtabstop = 2                            -- Soft tab stop
 vim.opt.smartindent = true                         -- Smart auto-indenting
 vim.opt.autoindent = true                          -- Copy indent from current line
 
+-- Line wrapping
+vim.opt.wrap = true                                -- Visually wrap long lines
+vim.opt.linebreak = true                           -- Don't break words in the middle
+vim.opt.formatoptions:remove({ "t", "c" })         -- Don't auto-wrap lines and comments
+
 -- Search settings
 vim.opt.ignorecase = true                          -- Case insensitive search
 vim.opt.smartcase = true                           -- Case sensitive if uppercase in search
