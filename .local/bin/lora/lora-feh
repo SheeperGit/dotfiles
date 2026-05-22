@@ -26,16 +26,26 @@
 #
 #     3: Copy the current image to clipboard. 
 
-# dmenu appearance
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
 alias feh='feh --fullscreen -S name --version-sort'
 
 # Directory of LoRA training directories. #
-BASE_DIR="$HOME/programs/grabber/training"
+BASE_DIR="$HOME/programs/sd-scripts/training"
 
 # Directories to exclude from BASE_DIR. #
 EXCLUDE='out'
 
+while getopts "p:f:" opt; do
+  case "$opt" in
+    p)
+      export prepend="$OPTARG"
+      ;;
+		f)
+			filter="$OPTARG"
+  esac
+done
+shift $((OPTIND - 1))
+
+# Get image directory, if not specified. #
 if [ $# -eq 0 ]; then
   selection=$(
     find "$BASE_DIR" -mindepth 1 -type d ! -empty | \
@@ -44,16 +54,40 @@ if [ $# -eq 0 ]; then
     dmenu -i -p "Select a Directory:"
   ) || exit 1
   
-  img_dir="$BASE_DIR/$selection"
-
-  set -- "$img_dir"/*.png "$img_dir"/*.jpg "$img_dir"/*.jpeg "$img_dir"/*.webp
+	set -- "$BASE_DIR/$selection"
 fi
 
-feh \
-  --action  '[Move to Trash]'"trash -vf %F \$(basename %F | sed 's/\.[^.]*$//').txt" \
-  --action1 '[Open in Gimp]'"gimp %F &" \
-  --action2 '[Move to/from Unused]'"move_unused.sh %F" \
-  --action3 '[Copy Image to Clipboard]'"xclip -sel clip -t image/png -i %F" \
-  --action4 '[Delete Range of Files]'"echo Unimplemented\n" \
-"$@"
+if [ -n "$filter" ]; then
+	# Get all txt files within selected dir. #
+	# Get all images with matching filter query. #
+	find "$@" -maxdepth 5 -type f -name "*.txt" -print0 | \
+	xargs -0 awk "$filter {print FILENAME}" | \
+	sed -e 's#.*/\([^/]*\)\.[^.]*$#\1#' | \
+	while IFS= read -r filename; do
+		find "$@" -type f \( \
+			-name "$filename.jpg" -o \
+			-name "$filename.jpeg" -o \
+			-name "$filename.png" -o \
+			-name "$filename.webp" -o \
+			-name "$filename.gif" \
+		\)
+	done
+else
+	find "$@" -type f \( \
+		-name '*.jpg' -o \
+		-name '*.jpeg' -o \
+		-name '*.png' -o \
+		-name '*.webp' -o \
+		-name '*.gif' \
+	\) 
+fi |
+feh --info 'echo %wx%h %N' -r \
+	--action  '[Move to Trash]file=%F ; trash -vf "$file" "${file%%.*}.txt"' \
+	--action1 '[Open in Gimp]gimp %F &' \
+	--action2 '[Move to/from Unused]move_unused.sh %F' \
+	--action3 '[Copy Image to Clipboard]xclip -sel clip -t image/png -i %F' \
+	--action4 '[Restore Original]f=%F; cp -vf "$(echo $f | sed "s|/training/|/training/orig/|")" "$f"' \
+	--action5 '[Open in Editor]file=%F ; "$TERMINAL" -e "$EDITOR" "${file%%.*}.txt" 2>/dev/null' \
+	--action6 '[Prepend Tag]file=%F ; sed -i "1s/^/${prepend}/" "${file%%.*}.txt"' \
+--filelist -
 
