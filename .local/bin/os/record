@@ -9,9 +9,6 @@
 #
 # Note: videoselected() is excluded from the list of options.
 
-# dmenu appearance
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
-
 ## Config ##
 OUT_DIR="$HOME"/Videos  ## Output Directory.
 SND_SVR='pulse'         ## Sound Server.
@@ -31,7 +28,7 @@ rectime() {
 
 updateicon() {
 	echo "$1" > /tmp/recordingicon
-	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}"
+	kill -35 "${STATUSBAR:-dwmblocks}"
 }
 
 killrecording() {
@@ -39,7 +36,7 @@ killrecording() {
 	kill -TERM "$recpid"
 	rm -f /tmp/recordingpid
 	updateicon ""
-	pkill -RTMIN+9 "${STATUSBAR:-dwmblocks}"
+	kill -35 "${STATUSBAR:-dwmblocks}"
 
   notify-send -t 1000 "$(basename "$0")" "Recording ended"
 }
