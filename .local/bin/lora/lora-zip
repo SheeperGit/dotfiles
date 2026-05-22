@@ -18,9 +18,6 @@
 #   lora-zip .            # Same as above.
 #   lora-zip path/to/dir  # Runs the script in `path/to/dir`.
 
-# dmenu appearance
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
-
 # Set the word delimiter to `\n`. #
 IFS='
 '
@@ -49,9 +46,6 @@ else
   CWD="$(realpath .)"
 fi
 
-OUT_DIR="$CWD"/zip.out
-[ ! -d "$OUT_DIR" ] && mkdir "$OUT_DIR"
-
 # Excluded zipfiles to extract. #
 XZIPFILES='*.txt
 final.jpg'
@@ -60,10 +54,10 @@ ZIPFILES=$(find "$CWD" -maxdepth 5 -type f -name "*.zip")
 zip_count="$(printf "%s\n" "$ZIPFILES" | wc -l)"
 
 printf "Input Directory: %s\n" "$CWD"
-printf "Output Directory: %s\n" "$OUT_DIR"
 printf "%s zip files found.\n" "$zip_count"
 
 for zipfile in $ZIPFILES ; do
+	echo "zipfile: $zipfile"
 	# List extracted files ahead of time. #
 	files="$(unzip -Z1 "$zipfile" -x $XZIPFILES | awk -v dir="$CWD" -F/ '!/\/$/ {print dir "/" $NF}')"
 
@@ -121,18 +115,19 @@ for zipfile in $ZIPFILES ; do
         ;;
     esac
   done
-
-  # Rename kept images to unique filenames (via timestamps) #
-  timestamp="$(date +'%F_%H-%M-%S.%N')"
-  rename -vi '' "${timestamp}__" -- "$@"
-
-  # Move images to output dir #
-  mv -i "$CWD/${timestamp}"__* "$OUT_DIR"
+	
+	zip_out_dir="$(basename -s '.zip' "$zipfile")"
+	for f in "$@"; do
+		[ -e "$f" ] && {
+			[ -d "$zip_out_dir" ] || mkdir "$zip_out_dir"
+			mv -vn "$f" "$zip_out_dir"
+		}
+	done
 
   # Update remaining amount of zipfiles to be processed. #
   zip_count=$((zip_count - 1))
 
-  # Early stop option #
+  # Early stop option. #
   [ "$zip_count" -ge 1 ] && \
     [ "$(printf "No\nYes" | dmenu -i -p "Do you want to stop here? ($zip_count left)")" = 'Yes' ] && \
     exit 0
