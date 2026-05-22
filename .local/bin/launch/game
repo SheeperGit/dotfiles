@@ -18,9 +18,6 @@
 #   select from a list of games closely matching the previous prompt to launch
 #   the game. The game is launched through Steam, but without the GUI.
 
-# dmenu appearance 
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
-
 game=$(
 	sqlite3 ~/.local/share/lutris/pga.db "SELECT slug FROM games;" | \
 	dmenu -i -p 'Select Game:'

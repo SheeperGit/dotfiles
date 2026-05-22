@@ -4,9 +4,6 @@
 # Disconnect Bluetooth devices #
 ################################
 
-# dmenu appearance
-alias dmenu="dmenu -m \"0\" -fn \"monospace:size=18\" -nb \"#222222\" -nf \"#bbbbbb\" -sb \"#003a4e\" -sf \"#eeeeee\""
-
 MODE_OPTS='Connect\nDisconnect'
 mode=$(
   printf '%b' "$MODE_OPTS" | \
