@@ -23,7 +23,7 @@ export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CACHE_HOME=$HOME/.cache
 
 export XINITRC="$XDG_CONFIG_HOME"/x11/xinitrc
-export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority # May break some DMs.
+#export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority # May break some DMs.
 export XCURSOR_PATH=/usr/share/icons:$XDG_DATA_HOME/icons
 export XCURSOR_THEME=breeze_cursors
 export QT_QPA_PLATFORMTHEME=qt5ct
