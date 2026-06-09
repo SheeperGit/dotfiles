@@ -34,13 +34,29 @@ BASE_DIR="$HOME/programs/sd-scripts/training"
 # Directories to exclude from BASE_DIR. #
 EXCLUDE='out'
 
-while getopts "p:f:" opt; do
+while getopts "p:d:f:a:r:" opt; do
   case "$opt" in
     p)
-      export prepend="$OPTARG"
+      export prepend_pos="${OPTARG%%,*}"
+      export prepend_tag="${OPTARG#*,}"
+      ;;
+    d)
+      export delete_tag="$OPTARG"
       ;;
 		f)
 			filter="$OPTARG"
+			;;
+    a)
+      export custom_action="$OPTARG"
+      ;;
+		r)
+      export old_tag="${OPTARG%%,*}"
+      export new_tag="${OPTARG#*,}"
+      ;;
+		*)
+			echo "Unknown flag: $opt" >&2
+			exit 1
+			;;
   esac
 done
 shift $((OPTIND - 1))
@@ -81,13 +97,16 @@ else
 		-name '*.gif' \
 	\) 
 fi |
-feh --info 'echo %wx%h %N' -r \
+feh --info 'echo Dim: %wx%h, File: %N' -r \
 	--action  '[Move to Trash]file=%F ; trash -vf "$file" "${file%%.*}.txt"' \
 	--action1 '[Open in Gimp]gimp %F &' \
 	--action2 '[Move to/from Unused]move_unused.sh %F' \
 	--action3 '[Copy Image to Clipboard]xclip -sel clip -t image/png -i %F' \
 	--action4 '[Restore Original]f=%F; cp -vf "$(echo $f | sed "s|/training/|/training/orig/|")" "$f"' \
 	--action5 '[Open in Editor]file=%F ; "$TERMINAL" -e "$EDITOR" "${file%%.*}.txt" 2>/dev/null' \
-	--action6 '[Prepend Tag]file=%F ; sed -i "1s/^/${prepend}/" "${file%%.*}.txt"' \
+	--action6 '[Prepend Tag]f=%F; txt="${f%%.*}.txt"; if [ -n "${prepend_tag}" ]; then c=$(head -n 1 "$txt" | tr -dc "," | wc -c); if [ "${prepend_pos:-0}" -gt "$c" ]; then sed -i -e "1s/$/, ${prepend_tag}/" "$txt"; else sed -i -E "1s/(([^,]*,[[:space:]]*){"${prepend_pos:-0}"})/\1${prepend_tag}, /" "$txt"; fi; fi' \
+	--action7 '[Replace Tag]file=%F ; [ -n "$new_tag" ] && sed -i -e "s/^${old_tag}, /${new_tag}, /" -e "s/, ${old_tag}, /, ${new_tag}, /g" -e "s/, ${old_tag}\$/, ${new_tag}/" -e "s/^${old_tag}\$/${new_tag}/" "${file%%.*}.txt"' \
+	--action8 '[Delete Tag]file=%F ; [ -n "$delete_tag" ] && sed -i -e "s/^${delete_tag}, //" -e "s/, ${delete_tag}, /, /g" -e "s/, ${delete_tag}\$//" -e "s/^${delete_tag}\$//" "${file%%.*}.txt"' \
+	${custom_action:+--action9 "[Custom Action]$custom_action"} \
 --filelist -
 
