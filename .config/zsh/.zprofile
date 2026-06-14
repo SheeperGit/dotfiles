@@ -43,6 +43,7 @@ export WGETRC="$XDG_CONFIG_HOME"/wget/wgetrc
 export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
 export BN_USER_DIRECTORY="$XDG_CONFIG_HOME"/binaryninja
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
+export TRITON_HOME="$XDG_CACHE_HOME/triton"
 
 # Command aliases
 
