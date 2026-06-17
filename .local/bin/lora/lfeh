@@ -37,8 +37,8 @@ EXCLUDE='out'
 while getopts "p:d:f:a:r:" opt; do
   case "$opt" in
     p)
-      export prepend_pos="${OPTARG%%,*}"
-      export prepend_tag="${OPTARG#*,}"
+      export prepend_pos="${OPTARG%%;*}"
+      export prepend_tag="${OPTARG#*;}"
       ;;
     d)
       export delete_tag="$OPTARG"
@@ -50,8 +50,8 @@ while getopts "p:d:f:a:r:" opt; do
       export custom_action="$OPTARG"
       ;;
 		r)
-      export old_tag="${OPTARG%%,*}"
-      export new_tag="${OPTARG#*,}"
+      export old_tag="${OPTARG%%;*}"
+      export new_tag="${OPTARG#*;}"
       ;;
 		*)
 			echo "Unknown flag: $opt" >&2
