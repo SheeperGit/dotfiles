@@ -25,7 +25,7 @@ alias mpv='mpv --loop'
 alias lf='lfub'
 alias pacs='sudo pacman -Sy --needed'
 alias pacr='sudo pacman -Rnus'
-alias yays='yay -S --needed --answerclean All --answerdiff None'
+alias yays='yay -S --needed --answerclean All --answerdiff None --removemake'
 alias yayr='yay -Rnus'
 alias s='sudo systemctl'
 alias susr='systemctl --user'
@@ -51,8 +51,16 @@ exts() {
     | sort -u
 }
 
+gdl() {
+	gallery-dl -i "$HOME/programs/sd-scripts/training/$1/sources.txt" -d "$HOME/programs/sd-scripts/training/$1"
+}
+
 edit() {
 	"$EDITOR" "$(which "$1")"
+}
+
+scanimage() {
+	scanimage -d "$SANE_DEFAULT_DEVICE" --format=png -p > "$1"
 }
 
 # History in state directory:

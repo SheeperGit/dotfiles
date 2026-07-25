@@ -27,6 +27,7 @@ export XINITRC="$XDG_CONFIG_HOME/x11/xinitrc"
 export XCURSOR_PATH="/usr/share/icons:$XDG_DATA_HOME/icons"
 export XCURSOR_THEME='breeze_cursors'
 export QT_QPA_PLATFORMTHEME='qt5ct'
+export SANE_DEFAULT_DEVICE='brother4:bus1;dev3'
 
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
 export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
@@ -44,6 +45,8 @@ export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
 export BN_USER_DIRECTORY="$XDG_CONFIG_HOME/binaryninja"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export TRITON_HOME="$XDG_CACHE_HOME/triton"
+export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
+export GDBHISTFILE="$XDG_DATA_HOME/gdb/history"
 
 # Command aliases
 
